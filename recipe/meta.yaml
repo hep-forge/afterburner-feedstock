@@ -1,10 +1,11 @@
 {% set versions = {
-    "0.0.0": "REPLACE_WITH_SHA256"
+    "0.2.1": "dbdac15f808c5bc8df20909b1892071ee31a2720ef6c6d3969eaf20f635c6b2f"
 } %}
 
 {% set version = environ.get('COMMIT_VERSION', None) %}
 {% set version = version or versions.keys()|first %}
 {% set version = version|string %}
+{% set root_tag = (root or '')|replace('.', '') %}
 
 {% set name = environ.get('ANACONDA_PACKAGE', 'afterburner')|string|lower %}
 
@@ -13,36 +14,53 @@ package:
   version: {{ environ.get('ANACONDA_VERSION', version)|replace("-", ".") }}
 
 source:
-  url: "https://github.com/eic/afterburner/archive/refs/tags/{{ version }}.tar.gz"   # TODO: confirm upstream's actual tag/tarball naming
+  url: "https://github.com/eic/afterburner/archive/refs/tags/v{{ version }}.tar.gz"
   {% if versions.get(version, None) %}
   sha256: {{ versions.get(version) }}
   {% endif %}
 
 build:
   number: 0
-  run_exports:
-    - {{ pin_subpackage(name, max_pin="x.x.x") }}
+  string: "root{{ root_tag }}"
+  # CLI tool (abconv), not a library -- nothing links against it, so no run_exports.
 
 requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - {{ stdlib('c') }}
+    - root {{ root }}.*
     - cmake
     - make
   host:
-    # TODO: library dependencies
+    - root {{ root }}.*
+    - hepmc>=3.2.6 root{{ root_tag }}
+    - clhep
+    - yaml-cpp
+    - gsl
+    - zlib
   run:
-    # TODO: runtime dependencies
+    - root {{ root }}.*
+    - hepmc>=3.2.6 root{{ root_tag }}
+    - clhep
+    - yaml-cpp
+    - gsl
+    - zlib
 
 test:
   commands:
-    - echo "TODO: a real smoke test"
+    - test -x "${PREFIX}/bin/abconv"
 
 about:
   home: "https://github.com/eic/afterburner"
   license: "NOASSERTION"
   summary: "Monte Carlo afterburner for beam crossing-angle and beam effects"
+  description: |
+    The EIC afterburner applies beam crossing-angle and beam-effects
+    corrections to HepMC event samples. The CMake project lives under
+    cpp/ in the upstream repo; abconv is the HepMC format-conversion +
+    afterburner-application CLI built here (Pythia-specific pieces of
+    the wider monorepo are not part of this build).
 
 extra:
   recipe-maintainers:
