@@ -11,6 +11,16 @@ Builds linux-amd64 + linux-arm64 in one matrix workflow and uploads to the
 
 Monte Carlo afterburner for beam crossing-angle and beam effects
 
+## Architectures
+
+| Architecture | Latest published |
+|--------------|------------------|
+| linux-amd64 (`linux-64`) | ✅ `0.2.1` |
+| linux-arm64 (`linux-aarch64`) | ✅ `0.2.1` |
+
+_As of the last feedstock render; the badges above are live._
+
+
 ## Install
 
 ```bash
@@ -20,3 +30,4 @@ conda install -c hep-forge -c conda-forge afterburner
 ## Maintainers
 
 * [@meiyasan](https://github.com/meiyasan/)
+
