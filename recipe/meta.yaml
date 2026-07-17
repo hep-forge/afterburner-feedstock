@@ -23,6 +23,12 @@ build:
   number: 0
   string: "root{{ root_tag }}"
   # CLI tool (abconv), not a library -- nothing links against it, so no run_exports.
+  # No ROOT dictionary generation currently, but this links against ROOT
+  # and could grow one -- pre-emptive protection against conda-build's
+  # prefix-relocation corrupting a future lib/*.pcm, matching
+  # root-feedstock/root-plus-feedstock's fix for the identical artifact.
+  ignore_prefix_files:
+    - lib/*.pcm
 
 requirements:
   build:
