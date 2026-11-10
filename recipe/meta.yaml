@@ -35,18 +35,20 @@ requirements:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - {{ stdlib('c') }}
-    - root {{ root }}.*
+    - root_base {{ root }}.* cxx{{ root_cxx_standard }}*
+    - python
     - cmake
     - make
   host:
-    - root {{ root }}.*
+    - root_base {{ root }}.* cxx{{ root_cxx_standard }}*
+    - python
     - hepmc>=3.2.6 root{{ root_tag }}
     - clhep
     - yaml-cpp
     - gsl
     - zlib
   run:
-    - root {{ root }}.*
+    - {{ pin_compatible('root_base', exact=True) }}
     - hepmc>=3.2.6 root{{ root_tag }}
     - clhep
     - yaml-cpp
